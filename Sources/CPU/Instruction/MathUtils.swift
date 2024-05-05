@@ -158,6 +158,21 @@ enum Utils {
         cpu.registers.hasHalfCarryFlag = false
     }
     
+    static func rrc<T: FixedWidthInteger & UnsignedInteger>(
+        cpu: inout CPU,
+        target: WritableKeyPath<Registers, T>
+    ) throws {
+        let size = MemoryLayout<T>.size
+        let newCarry: Bool = cpu.registers[keyPath: target] & 0x1 == 0x1
+        let rotatedCarry: T = (newCarry ? 1 : 0) << (size * 8)
+        let newValue = cpu.registers[keyPath: target] >> 1
+        cpu.registers[keyPath: target] = newValue & rotatedCarry
+        cpu.registers.hasCarryFlag = newCarry
+        cpu.registers.hasZeroFlag = false
+        cpu.registers.hasSubtractionFlag = false
+        cpu.registers.hasHalfCarryFlag = false
+    }
+    
     static func rl<T: FixedWidthInteger & UnsignedInteger>(
         cpu: inout CPU,
         target: WritableKeyPath<Registers, T>
@@ -166,8 +181,23 @@ enum Utils {
         let mask = T(0x1 << (size * 8))
         let newCarry: Bool = cpu.registers[keyPath: target] & mask == mask
         let oldCarry: T = cpu.registers.hasCarryFlag ? 1 : 0
-        let newValue = cpu.registers[keyPath: target] >> 1
+        let newValue = cpu.registers[keyPath: target] << 1
         cpu.registers[keyPath: target] = newValue & oldCarry
+        cpu.registers.hasCarryFlag = newCarry
+        cpu.registers.hasZeroFlag = false
+        cpu.registers.hasSubtractionFlag = false
+        cpu.registers.hasHalfCarryFlag = false
+    }
+    
+    static func rlc<T: FixedWidthInteger & UnsignedInteger>(
+        cpu: inout CPU,
+        target: WritableKeyPath<Registers, T>
+    ) throws {
+        let size = MemoryLayout<T>.size
+        let mask = T(0x1 << (size * 8))
+        let newCarry: Bool = cpu.registers[keyPath: target] & mask == mask
+        let newValue = cpu.registers[keyPath: target] << 1
+        cpu.registers[keyPath: target] = newValue & (newCarry ? 1 : 0)
         cpu.registers.hasCarryFlag = newCarry
         cpu.registers.hasZeroFlag = false
         cpu.registers.hasSubtractionFlag = false
@@ -190,6 +220,22 @@ enum Utils {
     }
     
     static func sra<T: FixedWidthInteger & UnsignedInteger>(
+        cpu: inout CPU,
+        target: WritableKeyPath<Registers, T>
+    ) throws {
+        let size = MemoryLayout<T>.size
+        let mask = T(0x1 << (size * 8))
+        let bit = (cpu.registers[keyPath: target] & mask)
+        let newCarry: Bool = cpu.registers[keyPath: target] & 0x1 == 0x1
+        let newValue = cpu.registers[keyPath: target] >> 1
+        cpu.registers[keyPath: target] = newValue | bit
+        cpu.registers.hasCarryFlag = newCarry
+        cpu.registers.hasZeroFlag = newValue == 0
+        cpu.registers.hasSubtractionFlag = false
+        cpu.registers.hasHalfCarryFlag = false
+    }
+    
+    static func srl<T: FixedWidthInteger & UnsignedInteger>(
         cpu: inout CPU,
         target: WritableKeyPath<Registers, T>
     ) throws {
