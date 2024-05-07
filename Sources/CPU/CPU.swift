@@ -12,15 +12,17 @@ struct CPU {
     var registers: Registers
     var memory: Memory
     var pc: UInt16
+    var sp: UInt16
     
-    init(registers: Registers, memory: Memory, pc: UInt16) {
+    init(registers: Registers, memory: Memory, pc: UInt16, sp: UInt16) {
         self.registers = registers
         self.memory = memory
         self.pc = pc
+        self.sp = sp
     }
     
     init() {
-        self.init(registers: Registers(), memory: Memory(), pc: 0)
+        self.init(registers: Registers(), memory: Memory(), pc: 0, sp: 0)
     }
     
     mutating func execute(instruction: Instruction) throws {

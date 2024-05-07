@@ -22,12 +22,13 @@ struct LD: Instruction {
     
     func execute(with cpu: inout CPU) throws {
         Self.write(Self.read(at: source, 
-                             cpu: cpu), 
+                             cpu: cpu),
                    at: target,
                    cpu: &cpu)
     }
     
-    static func read(at source: LDSource, cpu: CPU) -> any UnsignedInteger & FixedWidthInteger {
+    static func read(at source: LDSource, 
+                     cpu: CPU) -> any UnsignedInteger & FixedWidthInteger {
         switch source {
         case .a:
             return cpu.registers.a
@@ -50,7 +51,9 @@ struct LD: Instruction {
         }
     }
     
-    static func write(_ value: any UnsignedInteger & FixedWidthInteger, at target: LDTarget, cpu: inout CPU) {
+    static func write(_ value: any UnsignedInteger & FixedWidthInteger, 
+                      at target: LDTarget,
+                      cpu: inout CPU) {
         switch target {
         case .a:
             cpu.registers.a = UInt8(value)
