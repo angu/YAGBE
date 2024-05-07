@@ -8,7 +8,7 @@
 import Foundation
 
 struct BIT: Instruction {
-    let cycles: Int = 1
+    let cycles: UInt16 = 1
     let target: Target
     let bit: UInt16
     

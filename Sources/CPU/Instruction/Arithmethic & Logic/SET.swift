@@ -8,15 +8,15 @@
 import Foundation
 
 struct SET: Instruction {
-    var cycles: Int {
+    var cycles: UInt16 {
         switch target {
         case .bit8(_):
             return 2
-        case .bit16(let uInt16):
+        case .bit16(_):
             return 4
-        case .bit8Target(let bit8Target):
+        case .bit8Target(_):
             return 2
-        case .bit16Target(let bit16Target):
+        case .bit16Target(_):
             return 4
         }
     }

@@ -12,7 +12,7 @@ enum InstructionError: Error {
 }
 
 protocol Instruction {
-    var cycles: Int { get }
+    var cycles: UInt16 { get }
     func execute(with cpu: inout CPU) throws
 }
 

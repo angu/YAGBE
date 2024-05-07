@@ -8,7 +8,7 @@
 import Foundation
 
 struct OR: Instruction {
-    var cycles: Int = 1
+    var cycles: UInt16 = 1
     let target: Target
 
     func execute(with cpu: inout CPU) throws {

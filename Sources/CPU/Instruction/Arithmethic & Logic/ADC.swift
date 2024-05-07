@@ -18,7 +18,7 @@ import Foundation
  C -> Set if overflow from bit 7.
  */
 struct SBC: Instruction {
-    let cycles = 1 // TODO: Cycles should be 2 if target is 16bit
+    let cycles: UInt16 = 1 // TODO: Cycles should be 2 if target is 16bit
     let target: Target
     
     func execute(with cpu: inout CPU) throws {

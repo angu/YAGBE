@@ -9,7 +9,7 @@ import Foundation
 
 struct ADDHL: Instruction {
     
-    let cycles: Int = 2
+    let cycles: UInt16 = 2
     let target: Target
     
     func execute(with cpu: inout CPU) throws {

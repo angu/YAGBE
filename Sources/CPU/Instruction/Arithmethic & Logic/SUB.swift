@@ -8,7 +8,7 @@
 import Foundation
 
 struct CP: Instruction {
-    let cycles = 1
+    let cycles: UInt16 = 1
     let target: Target
     
     func execute(with cpu: inout CPU) throws {

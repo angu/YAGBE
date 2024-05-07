@@ -8,7 +8,7 @@
 import Foundation
 
 struct CPL: Instruction {
-    let cycles: Int = 1
+    let cycles: UInt16 = 1
     
     func execute(with cpu: inout CPU) throws {
         let newValue = ~cpu.registers.a
