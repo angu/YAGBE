@@ -255,8 +255,11 @@ enum Utils {
         let lowerMask = ~T(0) >> (MemoryLayout<T>.size * 8 / 2)
         let upperMask = lowerMask << (MemoryLayout<T>.size * 8 / 2)
         
-        let lowerValue = cpu.registers[keyPath: target] & lowerMask
-        let upperValue = cpu.registers[keyPath: target] & upperMask
-        cpu.registers[keyPath: target] = (lowerMask | upperMask)
+        var lowerValue = (cpu.registers[keyPath: target] & lowerMask)
+        var upperValue = (cpu.registers[keyPath: target] & upperMask)
+        
+        lowerValue = lowerValue << (MemoryLayout<T>.size * 8 / 2)
+        upperValue = upperValue >> (MemoryLayout<T>.size * 8 / 2)
+        cpu.registers[keyPath: target] = (lowerValue | upperValue)
     }
 }

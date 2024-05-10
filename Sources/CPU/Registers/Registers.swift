@@ -152,3 +152,19 @@ extension Registers {
         }
     }
 }
+
+extension Registers: CustomStringConvertible {
+    var description: String {
+        return """
+        8bit registers:
+            a:  0b\(String(a, radix: 2)) - 0b\(String(a, radix: 16))
+            b:  0b\(String(b, radix: 2)) - 0b\(String(b, radix: 16))
+            c:  0b\(String(c, radix: 2)) - 0b\(String(c, radix: 16))
+            d:  0b\(String(d, radix: 2)) - 0b\(String(d, radix: 16))
+            e:  0b\(String(e, radix: 2)) - 0b\(String(e, radix: 16))
+            f:  0b\(String(f, radix: 2)) - 0b\(String(f, radix: 16))
+            h:  0b\(String(h, radix: 2)) - 0b\(String(h, radix: 16))
+            l:  0b\(String(l, radix: 2)) - 0b\(String(l, radix: 16))
+        """
+    }
+}
