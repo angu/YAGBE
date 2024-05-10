@@ -31,6 +31,5 @@ struct CPU {
     
     mutating func step() throws {
         let instruction = memory.read(pc)
-        
     }
 }

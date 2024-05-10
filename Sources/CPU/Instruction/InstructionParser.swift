@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  InstructionParser.swift
 //  
 //
 //  Created by Andrea Tullis on 5/6/24.
@@ -21,6 +21,24 @@ struct InstructionParser {
             0x00: { _ in
                 return NOOP()
             },
+            0x03: { _ in
+                return INC(target: .bit16Target(.bc))
+            },
+            0x04: { _ in
+                return INC(target: .bit8Target(.b))
+            },
+            0x05: { _ in
+                return DEC(target: .bit8Target(.b))
+            },
+            0x06: { _ in
+                return LD(target: .b, source: .d8)
+            },
+            0x07: { _ in
+                return RLC(target: .bit8Target(.a))
+            },
+            0x40: { _ in
+                return LD(target: .b, source: .b)
+            }
         ]
         
         self.init(mappings: mappings)

@@ -56,21 +56,23 @@ struct LD: Instruction {
                       cpu: inout CPU) {
         switch target {
         case .a:
-            cpu.registers.a = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.a))
         case .b:
-            cpu.registers.b = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.b))
         case .c:
-            cpu.registers.c = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.c))
         case .d:
-            cpu.registers.d = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.d))
         case .e:
-            cpu.registers.e = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.e))
         case .h:
-            cpu.registers.h = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.h))
         case .l:
-            cpu.registers.l = UInt8(value)
+            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.l))
         case .hli:
-            cpu.registers.hl = UInt16(value)
+            fatalError("We should handle writing a word here!")
+//            cpu.memory.write(UInt8(value), at: UInt16(cpu.registers.hl))
+
         }
     }
 }
