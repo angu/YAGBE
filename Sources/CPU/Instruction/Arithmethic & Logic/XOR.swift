@@ -11,7 +11,7 @@ struct XOR: Instruction {
     let cycles: UInt16 = 1
     let target: Target
 
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         switch target {
         case .bit8(let uInt8):
             try Utils.xor(cpu: &cpu, value: uInt8, target: \.a)
@@ -24,5 +24,6 @@ struct XOR: Instruction {
             try Utils.xor(cpu: &cpu, value: value, target: \.a)
 
         }
+        return cycles
     }
 }

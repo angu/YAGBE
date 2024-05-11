@@ -23,8 +23,9 @@ struct ADD<T: UnsignedInteger & FixedWidthInteger>: Instruction {
         valueProvider = { _ in value }
     }
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         let value = UInt8(valueProvider(cpu) & 0xFF)
         try Utils.add(cpu: &cpu, value: value, target: \.a)
+        return cycles
     }
 }

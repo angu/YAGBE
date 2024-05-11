@@ -15,10 +15,9 @@ struct JUMP: Instruction {
     let cycles: UInt16 = 3
     let condition: JumpCondition
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         guard shouldExecute(cpu) else {
-            cpu.pc += cycles
-            return
+            return cycles
         }
         
         // Gameboy is little endian so read pc + 2 as most significant bit
@@ -26,7 +25,7 @@ struct JUMP: Instruction {
         let least_significant_byte = UInt16(cpu.memory.read(cpu.pc + 1))
         let most_significant_byte = UInt16(cpu.memory.read(cpu.pc + 2))
         let newPc = (most_significant_byte << 8) | least_significant_byte
-        cpu.pc = newPc
+        return newPc
     }
     
     func shouldExecute(_ cpu: CPU) -> Bool {

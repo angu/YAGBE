@@ -20,11 +20,12 @@ struct LD: Instruction {
     let target: LDTarget
     let source: LDSource
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         Self.write(Self.read(at: source, 
                              cpu: cpu),
                    at: target,
                    cpu: &cpu)
+        return cycles
     }
     
     static func read(at source: LDSource, 

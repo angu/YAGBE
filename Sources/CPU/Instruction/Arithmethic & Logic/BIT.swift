@@ -12,7 +12,7 @@ struct BIT: Instruction {
     let target: Target
     let bit: UInt16
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         switch target {
         case .bit8(_):
             fatalError()
@@ -31,5 +31,7 @@ struct BIT: Instruction {
             cpu.registers.hasSubtractionFlag = false
             cpu.registers.hasZeroFlag = flag
         }
+        
+        return cycles
     }
 }

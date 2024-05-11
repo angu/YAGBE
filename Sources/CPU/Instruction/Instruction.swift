@@ -13,7 +13,9 @@ enum InstructionError: Error {
 
 protocol Instruction {
     var cycles: UInt16 { get }
-    func execute(with cpu: inout CPU) throws
+    
+    @discardableResult
+    func execute(with cpu: inout CPU) throws -> UInt16
 }
 
 enum Target {

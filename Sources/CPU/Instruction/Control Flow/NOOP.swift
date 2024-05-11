@@ -10,7 +10,7 @@ import Foundation
 struct NOOP: Instruction {
     let cycles: UInt16 = 1
     
-    func execute(with cpu: inout CPU) throws {
-        // NOOP!
+    func execute(with cpu: inout CPU) throws -> UInt16 {
+        return cycles
     }
 }

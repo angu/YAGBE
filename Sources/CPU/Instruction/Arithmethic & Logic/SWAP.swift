@@ -14,7 +14,8 @@ struct SWAP<T: FixedWidthInteger & UnsignedInteger>: Instruction {
     }
     let target:  WritableKeyPath<Registers, T>
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         try Utils.swap(cpu: &cpu, target: target)
+        return cycles
     }
 }

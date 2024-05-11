@@ -11,7 +11,7 @@ struct SRA: Instruction {
     let cycles: UInt16 = 1
     let target: Target
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         switch target {
         case .bit8(_):
             throw InstructionError.invalidInstruction
@@ -22,5 +22,6 @@ struct SRA: Instruction {
         case .bit16Target(let bit16Target):
             try Utils.sra(cpu: &cpu, target: bit16Target.registerKeypath)
         }
+        return cycles
     }
 }

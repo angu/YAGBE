@@ -24,7 +24,7 @@ struct SET: Instruction {
     let target: Target
     let bit: UInt16
     
-    func execute(with cpu: inout CPU) throws {
+    func execute(with cpu: inout CPU) throws -> UInt16 {
         switch target {
         case .bit8(_):
             throw InstructionError.invalidInstruction
@@ -38,5 +38,6 @@ struct SET: Instruction {
             assert(bit < 16)
             cpu.registers[keyPath: bit16Target.registerKeypath] = cpu.registers[keyPath: bit16Target.registerKeypath] | UInt16(1 << bit)
         }
+        return cycles
     }
 }
