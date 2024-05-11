@@ -7,22 +7,24 @@
 
 import Foundation
 
-struct ADD: Instruction {
+struct ADD<T: UnsignedInteger & FixedWidthInteger>: Instruction {
     
-    let cycles: UInt16 = 1
-    let target: Target
+    var cycles: UInt16 {
+        return UInt16(MemoryLayout<T>.size)
+    }
+    
+    let valueProvider: (CPU) -> T
+    
+    init(target: KeyPath<Registers, T>) {
+        valueProvider = { return $0.registers[keyPath: target]}
+    }
+    
+    init(value: T) {
+        valueProvider = { _ in value }
+    }
     
     func execute(with cpu: inout CPU) throws {
-        switch target {
-        case .bit8(let uInt8):
-            try Utils.add(cpu: &cpu, value: uInt8, target: \.a)
-        case .bit16(let uInt16):
-            try Utils.add(cpu: &cpu, value: UInt8(uInt16 & 0xF), target: \.a)
-        case .bit8Target(let bit8Target):
-            try Utils.add(cpu: &cpu, value: cpu.registers[keyPath: bit8Target.registerKeypath], target: \.a)
-        case .bit16Target(let bit16Target):
-            let value = cpu.registers[keyPath: bit16Target.registerKeypath]
-            try Utils.add(cpu: &cpu, value: UInt8(value & 0xF), target: \.a)
-        }
+        let value = UInt8(valueProvider(cpu) & 0xFF)
+        try Utils.add(cpu: &cpu, value: value, target: \.a)
     }
 }

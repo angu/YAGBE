@@ -7,20 +7,14 @@
 
 import Foundation
 
-struct SWAP: Instruction {
-    let cycles: UInt16 = 1
-    let target: Target
+struct SWAP<T: FixedWidthInteger & UnsignedInteger>: Instruction {
+    
+    var cycles: UInt16 {
+        return UInt16(MemoryLayout<T>.size * 2)
+    }
+    let target:  WritableKeyPath<Registers, T>
     
     func execute(with cpu: inout CPU) throws {
-        switch target {
-        case .bit8(_):
-            throw InstructionError.invalidInstruction
-        case .bit16(_):
-            throw InstructionError.invalidInstruction
-        case .bit8Target(let bit8Target):
-            try Utils.swap(cpu: &cpu, target: bit8Target.registerKeypath)
-        case .bit16Target(let bit16Target):
-            try Utils.swap(cpu: &cpu, target: bit16Target.registerKeypath)
-        }
+        try Utils.swap(cpu: &cpu, target: target)
     }
 }

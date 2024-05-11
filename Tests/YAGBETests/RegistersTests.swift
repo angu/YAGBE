@@ -115,4 +115,14 @@ final class RegistersTests: XCTestCase {
         XCTAssertTrue(registers.hasCarryFlag)
         registers.clearFlags()
     }
+    
+    func testThatSetterAndGetterWorkTogether() throws {
+        var registers = Registers()
+        XCTAssertTrue(registers.f == 0)
+        
+        registers.hasCarryFlag = true
+        registers.hasZeroFlag = false
+        
+        XCTAssertTrue(registers.hasCarryFlag)
+    }
 }

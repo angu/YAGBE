@@ -109,11 +109,11 @@ extension Registers {
     }
     
     mutating func setValue(for flag: Flag, value: Bool) {
-        var bitMask = (1 << flag.rawValue)
+        var bitMask = UInt8(1 << flag.rawValue)
         if value {
             f = f | UInt8(bitMask)
         } else {
-            bitMask ^= bitMask
+            bitMask = ~bitMask
             f = f & UInt8(bitMask)
         }
     }
@@ -166,5 +166,45 @@ extension Registers: CustomStringConvertible {
             h:  0b\(String(h, radix: 2)) - 0b\(String(h, radix: 16))
             l:  0b\(String(l, radix: 2)) - 0b\(String(l, radix: 16))
         """
+    }
+}
+
+extension WritableKeyPath where Root == Registers, Value == UInt8 {
+    static var a: WritableKeyPath<Registers, UInt8> {
+        return \.a
+    }
+    
+    static var b: WritableKeyPath<Registers, UInt8> {
+        return \.b
+    }
+    
+    static var c: WritableKeyPath<Registers, UInt8> {
+        return \.c
+    }
+    
+    static var d: WritableKeyPath<Registers, UInt8> {
+        return \.d
+    }
+    
+    static var e: WritableKeyPath<Registers, UInt8> {
+        return \.e
+    }
+    
+    static var f: WritableKeyPath<Registers, UInt8> {
+        return \.f
+    }
+    
+    static var h: WritableKeyPath<Registers, UInt8> {
+        return \.h
+    }
+    
+    static var l: WritableKeyPath<Registers, UInt8> {
+        return \.l
+    }
+}
+
+extension WritableKeyPath where Root == Registers, Value == UInt16 {
+    static var af: WritableKeyPath<Registers, UInt16> {
+        return \.af
     }
 }
