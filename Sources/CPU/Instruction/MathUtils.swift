@@ -14,12 +14,13 @@ enum Utils {
         carry: Bool = false
     ) throws {
         let oldValue = cpu.registers[keyPath: target]
+        let oldCarry: T = (carry && cpu.registers.hasCarryFlag) ? 1 : 0
         let (newValue, overflow) = cpu.registers[keyPath: target].addingReportingOverflow(value)
-        let (carryValue, carryOverflow) = newValue.addingReportingOverflow((carry && cpu.registers.hasCarryFlag ? 1 : 0 ))
+        let (carryValue, carryOverflow) = newValue.addingReportingOverflow(oldCarry)
         cpu.registers[keyPath: target] = carryValue
         
         // Registers update
-        cpu.registers.hasZeroFlag = newValue == 0
+        cpu.registers.hasZeroFlag = carryValue == 0
         cpu.registers.hasCarryFlag = (overflow || carryOverflow)
         cpu.registers.hasSubtractionFlag = false
         
@@ -28,7 +29,7 @@ enum Utils {
         // than the addition caused a carry from the lower nibble to the upper nibble.
         let push = MemoryLayout<T>.size
         let mask: T = push > 1 ? 0xFF : 0xF
-        cpu.registers.hasHalfCarryFlag = (oldValue & mask) + (value & mask) > mask;
+        cpu.registers.hasHalfCarryFlag = (oldValue & mask) + (value & mask) + (oldCarry) > mask;
     }
     
     @discardableResult

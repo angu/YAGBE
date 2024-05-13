@@ -1,18 +1,77 @@
 import XCTest
 @testable import YAGBE
 
-final class ADDTests: XCTestCase {
+final class ADDHLTests: XCTestCase {
+    
+    func testADDNoOverflow() throws {
+        var cpu = CPU()
+        cpu.registers.hl = 0xFE11
+        
+        cpu.registers.af = 0x0022
+        
+        let instruction = ADDHL(register: \.af)
+        try cpu.execute(instruction: instruction)
+        
+        XCTAssertEqual(cpu.registers.hl, 0xFE33)
+        XCTAssertFalse(cpu.registers.hasZeroFlag)
+        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
+        XCTAssertFalse(cpu.registers.hasHalfCarryFlag)
+        XCTAssertFalse(cpu.registers.hasCarryFlag)
+    }
+    
+    func testADDWithOverflow() throws {
+        var cpu = CPU()
+        cpu.registers.hl = 0xFF00
+        cpu.registers.af = 0xFF00
+        
+        let instruction = ADDHL(register: \.af)
+        try cpu.execute(instruction: instruction)
+        
+        XCTAssertEqual(cpu.registers.hl, 0xFE00)
+        XCTAssertFalse(cpu.registers.hasZeroFlag)
+        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
+        XCTAssertFalse(cpu.registers.hasHalfCarryFlag)
+        XCTAssertTrue(cpu.registers.hasCarryFlag)
+    }
+    
+    func testADDWithHalfCarry() throws {
+        var cpu = CPU()
+        cpu.registers.hl = 0xFF02
+        cpu.registers.af = 0x00FF
+        
+        let instruction = ADDHL(register: \.af)
+        try cpu.execute(instruction: instruction)
+        
+        XCTAssertEqual(cpu.registers.hl, 0x01)
+        XCTAssertFalse(cpu.registers.hasZeroFlag)
+        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
+        XCTAssertTrue(cpu.registers.hasHalfCarryFlag)
+        XCTAssertTrue(cpu.registers.hasCarryFlag)
+    }
+    
+    func testADDSetsZeroCorrectly() throws {
+        var cpu = CPU()
+        cpu.registers.hl = 0xFFFF
+        cpu.registers.af = 0x0001
+        
+        let instruction = ADDHL(register: \.af)
+        try cpu.execute(instruction: instruction)
+        
+        XCTAssertEqual(cpu.registers.hl, 0b00000000)
+        XCTAssertTrue(cpu.registers.hasZeroFlag)
+        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
+        XCTAssertTrue(cpu.registers.hasHalfCarryFlag)
+        XCTAssertTrue(cpu.registers.hasCarryFlag)
+    }
     
     func testADDConstantNoOverflow() throws {
         var cpu = CPU()
-        cpu.registers.a = 0x11
+        cpu.registers.hl = 0xFE11
         
-        let value: UInt8 = 0x22
-        
-        let instruction = ADD(value: value)
+        let instruction = ADDHL(value: 0x0022)
         try cpu.execute(instruction: instruction)
         
-        XCTAssertEqual(cpu.registers.a, 0x33)
+        XCTAssertEqual(cpu.registers.hl, 0xFE33)
         XCTAssertFalse(cpu.registers.hasZeroFlag)
         XCTAssertFalse(cpu.registers.hasSubtractionFlag)
         XCTAssertFalse(cpu.registers.hasHalfCarryFlag)
@@ -21,14 +80,12 @@ final class ADDTests: XCTestCase {
     
     func testADDConstantWithOverflow() throws {
         var cpu = CPU()
-        cpu.registers.a = 0xFF
+        cpu.registers.hl = 0xFF00
         
-        let value: UInt8 = 0x10
-        
-        let instruction = ADD(value: value)
+        let instruction = ADDHL(value: 0xFF00)
         try cpu.execute(instruction: instruction)
         
-        XCTAssertEqual(cpu.registers.a, 0x0F)
+        XCTAssertEqual(cpu.registers.hl, 0xFE00)
         XCTAssertFalse(cpu.registers.hasZeroFlag)
         XCTAssertFalse(cpu.registers.hasSubtractionFlag)
         XCTAssertFalse(cpu.registers.hasHalfCarryFlag)
@@ -37,94 +94,26 @@ final class ADDTests: XCTestCase {
     
     func testADDConstantWithHalfCarry() throws {
         var cpu = CPU()
-        cpu.registers.a = 0b00001111
+        cpu.registers.hl = 0xFF02
         
-        let value: UInt8 = 0b000000001
-        
-        let instruction = ADD(value: value)
+        let instruction = ADDHL(value: 0x00FF)
         try cpu.execute(instruction: instruction)
         
-        XCTAssertEqual(cpu.registers.a, 0b00010000)
+        XCTAssertEqual(cpu.registers.hl, 0x01)
         XCTAssertFalse(cpu.registers.hasZeroFlag)
         XCTAssertFalse(cpu.registers.hasSubtractionFlag)
         XCTAssertTrue(cpu.registers.hasHalfCarryFlag)
-        XCTAssertFalse(cpu.registers.hasCarryFlag)
+        XCTAssertTrue(cpu.registers.hasCarryFlag)
     }
     
     func testADDConstantSetsZeroCorrectly() throws {
         var cpu = CPU()
-        cpu.registers.a = 0b11111111
+        cpu.registers.hl = 0xFFFF
         
-        let value: UInt8 = 0b000000001
-        
-        let instruction = ADD(value: value)
+        let instruction = ADDHL(value: 0x0001)
         try cpu.execute(instruction: instruction)
         
-        XCTAssertEqual(cpu.registers.a, 0b00000000)
-        XCTAssertTrue(cpu.registers.hasZeroFlag)
-        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
-        XCTAssertTrue(cpu.registers.hasHalfCarryFlag)
-        XCTAssertTrue(cpu.registers.hasCarryFlag)
-    }
-    
-    func testADDRegisterNoOverflow() throws {
-        var cpu = CPU()
-        cpu.registers.a = 0x11
-        
-        cpu.registers.b = 0x22
-        
-        let instruction = ADD(register: \.b)
-        try cpu.execute(instruction: instruction)
-        
-        XCTAssertEqual(cpu.registers.a, 0x33)
-        XCTAssertFalse(cpu.registers.hasZeroFlag)
-        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
-        XCTAssertFalse(cpu.registers.hasHalfCarryFlag)
-        XCTAssertFalse(cpu.registers.hasCarryFlag)
-    }
-    
-    func testADDRegisterWithOverflow() throws {
-        var cpu = CPU()
-        cpu.registers.a = 0xFF
-        
-        cpu.registers.b = 0x10
-        
-        let instruction = ADD(register: \.b)
-        try cpu.execute(instruction: instruction)
-        
-        XCTAssertEqual(cpu.registers.a, 0x0F)
-        XCTAssertFalse(cpu.registers.hasZeroFlag)
-        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
-        XCTAssertFalse(cpu.registers.hasHalfCarryFlag)
-        XCTAssertTrue(cpu.registers.hasCarryFlag)
-    }
-    
-    func testADDRegisterWithHalfCarry() throws {
-        var cpu = CPU()
-        cpu.registers.a = 0b00001111
-        
-        cpu.registers.b = 0b000000001
-        
-        let instruction = ADD(register: \.b)
-        try cpu.execute(instruction: instruction)
-        
-        XCTAssertEqual(cpu.registers.a, 0b00010000)
-        XCTAssertFalse(cpu.registers.hasZeroFlag)
-        XCTAssertFalse(cpu.registers.hasSubtractionFlag)
-        XCTAssertTrue(cpu.registers.hasHalfCarryFlag)
-        XCTAssertFalse(cpu.registers.hasCarryFlag)
-    }
-    
-    func testADDRegisterSetsZeroCorrectly() throws {
-        var cpu = CPU()
-        cpu.registers.a = 0b11111111
-        
-        cpu.registers.b = 0b000000001
-        
-        let instruction = ADD(register: \.b)
-        try cpu.execute(instruction: instruction)
-        
-        XCTAssertEqual(cpu.registers.a, 0b00000000)
+        XCTAssertEqual(cpu.registers.hl, 0b00000000)
         XCTAssertTrue(cpu.registers.hasZeroFlag)
         XCTAssertFalse(cpu.registers.hasSubtractionFlag)
         XCTAssertTrue(cpu.registers.hasHalfCarryFlag)

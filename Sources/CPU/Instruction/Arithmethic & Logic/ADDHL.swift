@@ -10,15 +10,18 @@ import Foundation
 struct ADDHL: Instruction {
     
     let cycles: UInt16 = 2
-    
     let valueProvider: (CPU) -> UInt16
     
-    init(target: KeyPath<Registers, UInt16>) {
-        valueProvider = { return $0.registers[keyPath: target]}
+    init(register: KeyPath<Registers, UInt16>) {
+        valueProvider = { return $0.registers[keyPath: register]}
+    }
+    
+    init(value: UInt16) {
+        valueProvider = { _ in value }
     }
     
     func execute(with cpu: inout CPU) throws -> UInt16 {
-        let value = UInt16(valueProvider(cpu))
+        let value = valueProvider(cpu)
         try Utils.add(cpu: &cpu, value: value, target: \.hl)
         return cycles
     }

@@ -15,8 +15,8 @@ struct ADD<T: UnsignedInteger & FixedWidthInteger>: Instruction {
     
     let valueProvider: (CPU) -> T
     
-    init(target: KeyPath<Registers, T>) {
-        valueProvider = { return $0.registers[keyPath: target]}
+    init(register: KeyPath<Registers, T>) {
+        valueProvider = { return $0.registers[keyPath: register]}
     }
     
     init(value: T) {
